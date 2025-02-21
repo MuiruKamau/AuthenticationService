@@ -31,6 +31,25 @@
 	</properties>
 	<dependencies>
 		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-dependencies</artifactId>
+			<version>2023.0.0</version> <!-- Use the latest Spring Cloud version compatible with your Spring Boot version -->
+			<type>pom</type>
+			<scope>import</scope>
+		</dependency>
+		<!-- Feign Client for communication with other microservices -->
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-openfeign</artifactId>
+			<version>4.2.0</version> <!-- Ensure this version aligns with your Spring Boot version -->
+		</dependency>
+		<!-- Eureka Client (if you are using Eureka for service discovery) -->
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+			<version>4.1.0</version>
+		</dependency>
+		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<optional>true</optional>
