@@ -48,20 +48,9 @@ public class SecurityConfig {
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",
                                 "/swagger-ui.html",
-                                "http://localhost:8080/swagger-ui/index.html",
+                                "http://localhost:8081/swagger-ui/index.html",
                                 "/authlogin",
-                                "/auth/**",
-                                "/loans/**",
-                                "/loans/all",
-                                "/loans/get/**",
-                                "/loans/post",
-                                "/loans/update/**",
-                                "/loans/delete/**",
-                                "/loans/calculate",
-                                "/customers/**",
-                                "/payments/**",
-                                "/stats/**",
-                                "/repayment-schedules/**"
+                                "/auth/**"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
