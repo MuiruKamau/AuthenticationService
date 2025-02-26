@@ -49,39 +49,21 @@ public class SecurityConfig {
                                 "/swagger-ui/**",
                                 "/swagger-ui.html",
                                 "http://localhost:8081/swagger-ui/index.html",
-                                "/authlogin",
-                                "/auth/**"
+                                "/auth/register", // Make sure register is permitted
+                                "/auth/login",
+                                "/auth/public"
+
+                                // Make sure login is permitted
                         ).permitAll()
-                        .anyRequest().authenticated()
+                        // Example Role-Based Access Control rules:
+                        .requestMatchers("/auth/admin/**").hasRole("ADMINISTRATOR") // Only ADMIN role can access /auth/admin/**
+                        .requestMatchers("/auth/teacher/courses").hasAnyRole("TEACHER", "ADMINISTRATOR") // TEACHER or ADMIN can access /auth/teacher/**
+                        .requestMatchers("/auth/student/**").hasAnyRole("STUDENT", "TEACHER", "ADMINISTRATOR") // STUDENT, TEACHER, or ADMIN can access /auth/student/**
+                        .anyRequest().authenticated() // All other /auth/** endpoints require authentication
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(new JwtAuthenticationFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
-
 }
-
-
-// Disabling security
-    /*public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .csrf(csrf -> csrf.disable()) // Keep CSRF disabled if you intend to disable it
-                .authorizeHttpRequests(auth -> auth
-                        .anyRequest().permitAll() //  <--  THIS IS THE KEY CHANGE: Allow ALL requests
-                );
-        return http.build(); // Make sure this line is present and *not* commented out
-    } */
-
-
-
-
-
-
-
-
-
-
-
-
-
