@@ -13,6 +13,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.*;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import com.app.AuthenticationService.dto.RoleAssignmentDto; // Import RoleAssignmentDto
+import com.app.AuthenticationService.model.Role; // Import Role
+import org.springframework.security.access.prepost.PreAuthorize; // Import PreAuthorize
+import java.util.Optional;
+import java.util.HashSet; // Import HashSet if not already imported
+import java.util.Set;      // Import Set if not already imported
 
 @CrossOrigin(origins = "*", allowedHeaders = "*", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.OPTIONS})
 @RestController
@@ -34,17 +40,10 @@ public class AuthController {
         user.setEmail(registrationDto.getEmail());
         user.setPassword(new BCryptPasswordEncoder().encode(registrationDto.getPassword()));
 
-        // Set roles from DTO to User entity
-        if (registrationDto.getRoles() != null) {
-            user.setRoles(registrationDto.getRoles());
-        } else {
-            // Optionally, assign a default role if no roles are provided during registration
-            // Example: Assign STUDENT role by default
-            // user.setRoles(Set.of(Role.STUDENT));
-        }
+        // No need to set roles from registrationDto anymore, users are registered without roles initially
 
         userRepository.save(user);
-        return ResponseEntity.ok().body(new ApiResponse(null, "Registration successful", HttpStatus.OK.value()));
+        return ResponseEntity.ok().body(new ApiResponse(null, "Registration successful. Awaiting role assignment.", HttpStatus.OK.value())); // Updated message
     }
 
     @PostMapping("/login")
@@ -75,4 +74,19 @@ public class AuthController {
         return ResponseEntity.ok(new ApiResponse(null, "Public Endpoint - No Authentication Required", HttpStatus.OK.value()));
     }
 
+    // New endpoint for assigning roles - Only SUPER_ADMINISTRATOR can access
+    @PostMapping("/admin/assign-role")
+    @PreAuthorize("hasRole('SUPER_ADMINISTRATOR')") // Secure this endpoint for SUPER_ADMINISTRATOR
+    public ResponseEntity<?> assignRole(@RequestBody RoleAssignmentDto roleAssignmentDto) {
+        Optional<User> userOptional = userRepository.findByUsername(roleAssignmentDto.getUsername());
+        if (userOptional.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new RegisterResponse("User not found", HttpStatus.NOT_FOUND.value()));
+        }
+
+        User user = userOptional.get();
+        user.setRoles(roleAssignmentDto.getRoles()); // Update user roles
+        userRepository.save(user);
+
+        return ResponseEntity.ok(new ApiResponse(null, "Roles assigned successfully to user: " + user.getUsername(), HttpStatus.OK.value()));
+    }
 }

@@ -3,5 +3,6 @@ package com.app.AuthenticationService.model;
 public enum Role {
     STUDENT,
     TEACHER,
-    ADMINISTRATOR
+    ADMINISTRATOR,
+    SUPER_ADMINISTRATOR // Added Super Administrator role
 }

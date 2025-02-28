@@ -57,9 +57,10 @@ public class SecurityConfig {
                                 // Make sure login is permitted
                         ).permitAll()
                         // Example Role-Based Access Control rules:
-                        .requestMatchers("/auth/admin/**").hasRole("ADMINISTRATOR") // Only ADMIN role can access /auth/admin/**
-                        .requestMatchers("/auth/teacher/courses").hasAnyRole("TEACHER", "ADMINISTRATOR") // TEACHER or ADMIN can access /auth/teacher/**
-                        .requestMatchers("/auth/student/**").hasAnyRole("STUDENT", "TEACHER", "ADMINISTRATOR") // STUDENT, TEACHER, or ADMIN can access /auth/student/**
+                        .requestMatchers("/auth/admin/assign-role").hasRole("SUPER_ADMINISTRATOR") // Only SUPER_ADMINISTRATOR can assign roles
+                        .requestMatchers("/auth/admin/**").hasRole("ADMINISTRATOR") // Original admin endpoints for ADMINISTRATOR
+                        .requestMatchers("/auth/teacher/courses").hasAnyRole("TEACHER", "ADMINISTRATOR", "SUPER_ADMINISTRATOR") // TEACHER or ADMIN or SUPER_ADMIN
+                        .requestMatchers("/auth/student/**").hasAnyRole("STUDENT", "TEACHER", "ADMINISTRATOR", "SUPER_ADMINISTRATOR") // STUDENT, TEACHER, or ADMIN or SUPER_ADMIN
                         .anyRequest().authenticated() // All other /auth/** endpoints require authentication
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
